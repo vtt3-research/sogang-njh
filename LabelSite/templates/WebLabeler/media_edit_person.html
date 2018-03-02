@@ -1,0 +1,75 @@
+{% extends 'WebLabeler/base_frame.html' %}
+
+{% load staticfiles %}
+{% load baseframe_tags %}
+
+{% block head %}
+
+{% endblock head %}
+
+{%  block nav %}
+    {% nav_bar True "Person" %}
+{%  endblock nav %}
+
+{% block content %}
+    <div class="container">
+        <br>
+        {% media_header %}
+        <br>
+        <h3>Shot Table (5/{{ max_shots }})</h3>
+        <hr>
+        <div class="container">
+            <input id="ex6" type="text" style="width: 100%" data-slider-min="-5" data-slider-max="20" data-slider-step="1" data-slider-value="3"/><br>
+            <span id="ex6CurrentSliderValLabel">Current Slider Value: <span id="ex6SliderVal">3</span></span>
+        </div>
+
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    {% for shot in shots %}
+                        <th>
+                            <a href="{% url 'media_edit_person_page' media.pk shot.shotNum %}" class="btn btn-outline-primary btn-block" role="button" aria-disabled="true">Shot{{ shot.shotNum }}</a>
+                        </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% for shot in shots %}
+                        <td>
+                            <img class="img-thumbnail" id="pTagStart{{ shot.shotNum }}" src="..."><br>
+                            <img class="img-thumbnail" id="pTagEnd{{ shot.shotNum }}" src="...">
+                        </td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+{% endblock content %}
+
+{% block jquery %}
+
+    <script>
+        $("#ex6").slider();
+        $("#ex6").on("slide", function(slideEvt) {
+            $("#ex6SliderVal").text(slideEvt.value);
+        });
+    </script>
+
+    {% util_get_image %}
+    <script>
+        {% for shot in shots %}
+            getImageURL("#pTagStart{{ shot.shotNum }}", {{ media.pk }}, {{ shot.startFrame }});
+            getImageURL("#pTagEnd{{ shot.shotNum }}", {{ media.pk }}, {{ shot.endFrame }});
+        {% endfor %}
+    </script>
+
+
+
+{% endblock jquery %}
+
+{% block footer %}
+
+{% endblock footer %}

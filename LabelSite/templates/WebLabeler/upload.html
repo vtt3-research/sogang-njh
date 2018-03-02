@@ -1,0 +1,165 @@
+{% extends 'WebLabeler/base_frame.html' %}
+
+{% load staticfiles %}
+{% load baseframe_tags %}
+
+{% block head %}
+    <!-- blueimp Gallery styles -->
+    <link rel="stylesheet" href="{% static 'fileupload/css/blueimp-gallery.min.css' %}">
+    <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
+    <link rel="stylesheet" href="{% static 'fileupload/css/jquery.fileupload-ui.css' %}">
+    <style>
+    /* Hide Angular JS elements before initializing */
+    .ng-cloak {
+        display: none;
+    }
+    </style>
+{% endblock head %}
+
+{%  block nav %}
+    {% nav_bar %}
+{%  endblock nav %}
+
+{% block content %}
+    <div class="container">
+        <h1>Media File Register</h1>
+        <br>
+        <blockquote>
+            <p>Media 파일을 등록(업로드)하는 페이지입니다.<br>
+            드래그 앤 드랍을 지원합니다.<br>
+            </p>
+        </blockquote>
+        <br>
+
+        <!-- The file upload form used as target for the file upload widget -->
+        <form id="fileupload" action="." method="POST" enctype="multipart/form-data" data-ng-app="demo" data-ng-controller="DemoFileUploadController" data-file-upload="options" data-ng-class="{'fileupload-processing': processing() || loadingFiles}"> {% csrf_token %}
+            <!-- Redirect browsers with JavaScript disabled to the origin page -->
+            <noscript><input type="hidden" name="redirect" value="http://blueimp.github.io/jQuery-File-Upload/"></noscript>
+            <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+            <div class="row fileupload-buttonbar">
+                <div class="col-lg-7">
+                    <!-- The fileinput-button span is used to style the file input field as button -->
+                    <span class="btn btn-outline-success fileinput-button" ng-class="{disabled: disabled}">
+                        <i class="fas fa-plus"></i>
+                        <span>Add files...</span>
+                        <input type="file" name="localFile" multiple ng-disabled="disabled">
+                    </span>
+                    <button type="button" class="btn btn-outline-primary start" data-ng-click="submit()">
+                        <i class="fas fa-upload"></i>
+                        <span>Start upload</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-warning cancel" data-ng-click="cancel()">
+                        <i class="fas fa-ban"></i>
+                        <span>Cancel upload</span>
+                    </button>
+                    <!-- The loading indicator is shown during file processing -->
+                    <div class="fileupload-loading"></div>
+                </div>
+                <!-- The global progress information -->
+                <div class="col-lg-5 fade" data-ng-class="{in: active()}">
+                    <!-- The global progress bar -->
+                    <div class="progress progress-bar progress-bar-striped active" data-file-upload-progress="progress()">
+                        <div class="progress-bar bg-success" data-ng-style="{width: num + '%'}"></div>
+                    </div>
+                    <!-- The extended global progress information -->
+                    <div class="progress-extended">&nbsp;</div>
+                </div>
+            </div>
+            {% verbatim %}
+            <!-- The table listing the files available for upload/download -->
+            <table class="table table-striped files ng-cloak">
+                <tr data-ng-repeat="file in queue">
+                    <td data-ng-switch data-on="!!file.thumbnailUrl">
+                        <div class="preview" data-ng-switch-when="true">
+                            <a data-ng-href="{{file.url}}" title="{{file.name}}" download="{{file.name}}" data-gallery><video data-ng-src="{{file.thumbnailUrl}}" alt=""></a>
+                        </div>
+                        <div class="preview" data-ng-switch-default data-file-upload-preview="file"></div>
+                    </td>
+                    <td>
+                        <p class="name" data-ng-switch data-on="!!file.url">
+                            <span data-ng-switch-when="true" data-ng-switch data-on="!!file.thumbnailUrl">
+                                <a data-ng-switch-when="true" data-ng-href="{{file.url}}" title="{{file.name}}" download="{{file.name}}" data-gallery>{{file.name}}</a>
+                                <a data-ng-switch-default data-ng-href="{{file.url}}" title="{{file.name}}" download="{{file.name}}">{{file.name}}</a>
+                            </span>
+                            <span data-ng-switch-default>{{file.name}}</span>
+                        </p>
+                        <div data-ng-show="file.error"><span class="label label-important">Error</span> {{file.error}}</div>
+                    </td>
+                    <td>
+                        <p class="size">{{file.size | formatFileSize}}</p>
+                        <div class="progress progress-bar progress-bar-striped" role="progressbar" data-ng-class="{pending: 'in'}[file.$state()]" data-file-upload-progress="file.$progress()"><div class="progress-bar progress-bar-success" data-ng-style="{width: num + '%'}"></div></div>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-outline-primary start" data-ng-click="file.$submit()" data-ng-hide="!file.$submit">
+                            <i class="fas fa-upload"></i>
+                            <span>Start</span>
+                        </button>
+                        <button type="button" class="btn btn-outline-warning cancel" data-ng-click="file.$cancel()" data-ng-hide="!file.$cancel">
+                            <i class="fas fa-ban"></i>
+                            <span>Cancel</span>
+                        </button>
+                        <button data-ng-controller="FileDestroyController" type="button" class="btn btn-outline-danger destroy" data-ng-click="file.$destroy()" data-ng-hide="!file.$destroy">
+                            <i class="fas fa-trash"></i>
+                            <span>Delete</span>
+                        </button>
+                    </td>
+                </tr>
+            </table>
+            {% endverbatim %}
+        </form>
+        <br>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Demo Notes</h3>
+            </div>
+            <div class="panel-body">
+                <ul>
+                    <li>비디오 파일의 최대 사이즈는 <strong>2 GB</strong> 입니다.</li>
+                    <li>비디오 파일 (<strong>MP4</strong>) 만 업로드 가능합니다.</li>
+                    <li><strong>drag &amp; drop</strong> 기능을 지원합니다. (see <a href="https://github.com/blueimp/jQuery-File-Upload/wiki/Browser-support">Browser support</a>).</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block jquery %}
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.2/angular.min.js"></script>
+
+    <!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+    <script src="{% static 'fileupload/js/vendor/jquery.ui.widget.js' %}"></script>
+    <!-- The Load Image plugin is included for the preview images and image resizing functionality -->
+    <script src="{% static 'fileupload/js/load-image.min.js' %}"></script>
+    <!-- The Canvas to Blob plugin is included for image resizing functionality -->
+    <script src="{% static 'fileupload/js/canvas-to-blob.min.js' %}"></script>
+    <!-- blueimp Gallery script -->
+    <script src="{% static 'fileupload/js/jquery.blueimp-gallery.min.js' %}"></script>
+    <!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
+    <script src="{% static 'fileupload/js/jquery.iframe-transport.js' %}"></script>
+    <!-- The basic File Upload plugin -->
+    <script src="{% static 'fileupload/js/jquery.fileupload.js' %}"></script>
+    <!-- The File Upload processing plugin -->
+    <script src="{% static 'fileupload/js/jquery.fileupload-process.js' %}"></script>
+    <!-- The File Upload image preview & resize plugin -->
+    <script src="{% static 'fileupload/js/jquery.fileupload-image.js' %}"></script>
+    <!-- The File Upload audio preview plugin -->
+    <script src="{% static 'fileupload/js/jquery.fileupload-audio.js' %}"></script>
+    <!-- The File Upload video preview plugin -->
+    <script src="{% static 'fileupload/js/jquery.fileupload-video.js' %}"></script>
+    <!-- The File Upload validation plugin -->
+    <script src="{% static 'fileupload/js/jquery.fileupload-validate.js' %}"></script>
+    <!-- The File Upload Angular JS module -->
+    <script src="{% static 'fileupload/js/jquery.fileupload-angular.js' %}"></script>
+    <!-- The main application script -->
+    <script src="{% static 'fileupload/js/app.js' %}"></script>
+    <script src="{% static 'fileupload/js/csrf.js' %}"></script>
+{% endblock jquery %}
+
+{% block footer %}
+    {% comment %}
+    <span class="text-muted">Footer From Front Page.</span>
+    {% endcomment %}
+
+    <span class="progress progress-bar progress-bar-striped active" role="progressbar" style="width: 10%" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></span>
+
+{% endblock footer %}

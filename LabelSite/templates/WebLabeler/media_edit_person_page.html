@@ -1,0 +1,260 @@
+{% extends 'WebLabeler/base_frame.html' %}
+
+{% load staticfiles %}
+{% load baseframe_tags %}
+{% load mathfilters %}
+
+{% block head %}
+
+{% endblock head %}
+
+{%  block nav %}
+    {% nav_bar True "Person" %}
+{%  endblock nav %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <a href="{% url 'media_edit_person' media.pk %}" class="btn btn-outline-info btn-block" role="button" aria-disabled="true">
+                    <i class="fas fa-arrow-alt-circle-left"></i>Back
+                </a>
+            </div>
+            <div class="col-md-4">
+
+            </div>
+            <div class="col-md-4">
+
+            </div>
+
+        </div>
+        <br>
+        <h3>Add Tag</h3>
+        <hr>
+        <div class="row">
+            <div class="col-md-4">
+                START
+                <img id="pTagStart" src="/uploads/{{ media.thumbnail }}">
+                <input id="ex6" type="text" style="width: 100%" data-slider-min="-5" data-slider-max="20" data-slider-step="1" data-slider-value="3"/><br>
+                <span id="ex6CurrentSliderValLabel">Current Slider Value: <span id="ex6SliderVal">3</span></span><br>
+                <label>Coord (x, y, w, h): </label>
+                <input name=pTagStartCoords type="text" class="form-control input-sm" readonly>
+            </div>
+            <div class=" col-md-4">
+                MIDDLE
+                <img id="pTagMiddle" src="/uploads/{{ media.thumbnail }}">
+                <input id="ex6" type="text" style="width: 100%" data-slider-min="-5" data-slider-max="20" data-slider-step="1" data-slider-value="3"/><br>
+                <span id="ex6CurrentSliderValLabel">Current Slider Value: <span id="ex6SliderVal">3</span></span><br>
+                <label>Coord (x, y, w, h): </label>
+                <input name=pTagMiddleCoords type="text" class="form-control input-sm" readonly>
+            </div>
+            <div class=" col-md-4">
+                END
+                <img id="pTagEnd" src="/uploads/{{ media.thumbnail }}">
+                <input id="ex6" type="text" style="width: 100%" data-slider-min="-5" data-slider-max="20" data-slider-step="1" data-slider-value="3"/><br>
+                <span id="ex6CurrentSliderValLabel">Current Slider Value: <span id="ex6SliderVal">3</span></span><br>
+                <label>Coord (x, y, w, h): </label>
+                <input name=pTagEndCoords type="text" class="form-control input-sm" readonly>
+            </div>
+        </div>
+    <br>
+        <div class="container">
+<div class="btn-group btn-group-toggle" data-toggle="buttons">
+  <label class="btn btn-secondary active">
+    <input type="radio" name="options" id="option1" autocomplete="off"> Active
+  </label>
+  <label class="btn btn-secondary">
+    <input type="radio" name="options" id="option2" autocomplete="off"> Radio
+  </label>
+  <label class="btn btn-secondary">
+    <input type="radio" name="options" id="option3" autocomplete="off"> Radio
+  </label>
+  <label class="btn btn-secondary">
+    <input type="radio" name="options" id="option1" autocomplete="off"> Active
+  </label>
+  <label class="btn btn-secondary">
+    <input type="radio" name="options" id="option2" autocomplete="off"> Radio
+  </label>
+  <label class="btn btn-secondary">
+    <input type="radio" name="options" id="option3" autocomplete="off"> Radio
+  </label>
+  <label class="btn btn-secondary">
+    <input type="radio" name="options" id="option1" autocomplete="off"> Active
+  </label>
+  <label class="btn btn-secondary">
+    <input type="radio" name="options" id="option2" autocomplete="off"> Radio
+  </label>
+  <label class="btn btn-secondary">
+    <input type="radio" name="options" id="option3" autocomplete="off"> Radio
+  </label>
+  <label class="btn btn-secondary">
+    <input type="radio" name="options" id="option1" autocomplete="off"> Active
+  </label>
+  <label class="btn btn-secondary">
+    <input type="radio" name="options" id="option2" autocomplete="off"> Radio
+  </label>
+  <label class="btn btn-secondary">
+    <input type="radio" name="options" id="option3" autocomplete="off"> Radio
+  </label>
+</div>
+            <br>
+            <a href="$" class="btn btn-outline-primary btn-block" role="button" aria-disabled="true">Add</a>
+        </div>
+        <br>
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: {{ shot_num | div:shot_max | mul:100 }}%;"
+                 aria-valuenow="{{ shot_num }}" aria-valuemin="0" aria-valuemax="{{ shot_max }}">
+                {{ shot_num }} / {{ shot_max }}
+            </div>
+        </div>
+        <br>
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                {% if shot_num == "1" %}
+                    <li class="page-item disabled"><a class="page-link" href="{% url 'media_edit_person_page' media.pk shot_num|sub:1 %}">Previous</a></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="{% url 'media_edit_person_page' media.pk shot_num|sub:1 %}">Previous</a></li>
+                {% endif %}
+                <li class="page-item disabled"><a class="page-link" href="{% url 'media_edit_person_page' media.pk shot_num %}">{{ shot_num }}</a></li>
+                {% if shot_num|add:0 == shot_max|add:0 %}
+                    <li class="page-item disabled"><a class="page-link" href="{% url 'media_edit_person_page' media.pk shot_num|add:1 %}">Next</a></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="{% url 'media_edit_person_page' media.pk shot_num|add:1 %}">Next</a></li>
+                {% endif %}
+
+            </ul>
+        </nav>
+
+        <br>
+        <h3>Tag Table</h3>
+        <hr>
+        <div class="row">
+            <div class="col-md-3">
+                START
+                <img class="img-thumbnail" id="pTagStart{{ shot.shotNum }}" src="...">
+            </div>
+            <div class=" col-md-3">
+                MIDDLE
+                <img class="img-thumbnail" id="pTagMiddle{{ shot.shotNum }}" src="...">
+            </div>
+            <div class=" col-md-3">
+                END
+                <img class="img-thumbnail" id="pTagEnd{{ shot.shotNum }}" src="...">
+            </div>
+            <div class=" col-md-3">
+            </div>
+        </div>
+
+    </div>
+
+{% endblock content %}
+
+{% block jquery %}
+    {% util_get_image %}
+    <script>
+        getImageURL("#pTagStart{{ shot.shotNum }}", {{ media.pk }}, {{ shot.startFrame }});
+        getImageURL("#pTagStart{{ shot.shotNum }}", {{ media.pk }}, {{ shot.startFrame }});
+        getImageURL("#pTagEnd{{ shot.shotNum }}", {{ media.pk }}, {{ shot.endFrame }});
+    </script>
+
+    <script>
+        $("#ex6").slider();
+        $("#ex6").on("slide", function(slideEvt) {
+            $("#ex6SliderVal").text(slideEvt.value);
+        });
+    </script>
+
+
+    <script src="{% static 'tapmodo-Jcrop-1902fbc/js/jquery.Jcrop.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'tapmodo-Jcrop-1902fbc/css/jquery.Jcrop.css' %}" type="text/css" />
+
+    <script>
+        var coords_start_x = -1;
+        var coords_start_y = -1;
+        var coords_start_w = -1;
+        var coords_start_h = -1;
+
+        function showCoords_start_(c) {
+            var coords = parseInt(c.x).toString() + ", " + parseInt(c.y).toString()
+                    + ", " + parseInt(c.w).toString() + ", " + parseInt(c.h).toString();
+
+            coords_start_x = c.x;
+            coords_start_y = c.y;
+            coords_start_w = c.w;
+            coords_start_h = c.h;
+
+            $('[name="pTagStartCoords"]').val(coords);
+        }
+        var jcrop_api_start_;
+
+        function setJCrop_start_() {
+            jcrop_api_start_ = $.Jcrop('#pTagStart', {
+                onSelect: showCoords_start_,
+                onChange: showCoords_start_,
+                boxWidth: 340, boxHeight: 300
+            });
+        }
+
+        setJCrop_start_();
+
+        var coords_middle_x = -1;
+        var coords_middle_y = -1;
+        var coords_middle_w = -1;
+        var coords_middle_h = -1;
+
+        function showCoords_middle_(c) {
+            var coords = parseInt(c.x).toString() + ", " + parseInt(c.y).toString()
+                    + ", " + parseInt(c.w).toString() + ", " + parseInt(c.h).toString();
+
+            coords_middle_x = c.x;
+            coords_middle_y = c.y;
+            coords_middle_w = c.w;
+            coords_middle_h = c.h;
+
+            $('[name="pTagMiddleCoords"]').val(coords);
+        }
+        var jcrop_api_middle_;
+
+        function setJCrop_middle_() {
+            jcrop_api_start_ = $.Jcrop('#pTagMiddle', {
+                onSelect: showCoords_middle_,
+                onChange: showCoords_middle_,
+                boxWidth: 340, boxHeight: 300
+            });
+        }
+
+        setJCrop_middle_();
+
+        var coords_end_x = -1;
+        var coords_end_y = -1;
+        var coords_end_w = -1;
+        var coords_end_h = -1;
+
+        function showCoords_end_(c) {
+            var coords = parseInt(c.x).toString() + ", " + parseInt(c.y).toString()
+                    + ", " + parseInt(c.w).toString() + ", " + parseInt(c.h).toString();
+
+            coords_end_x = c.x;
+            coords_end_y = c.y;
+            coords_end_w = c.w;
+            coords_end_h = c.h;
+
+            $('[name="pTagEndCoords"]').val(coords);
+        }
+        var jcrop_api_end_;
+
+        function setJCrop_end_() {
+            jcrop_api_start_ = $.Jcrop('#pTagEnd', {
+                onSelect: showCoords_end_,
+                onChange: showCoords_end_,
+                boxWidth: 340, boxHeight: 300
+            });
+        }
+
+        setJCrop_end_();
+    </script> <!-- jcrop script end -->
+
+
+
+
+{% endblock jquery %}

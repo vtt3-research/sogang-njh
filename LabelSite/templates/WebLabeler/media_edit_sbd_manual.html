@@ -1,0 +1,94 @@
+{% extends 'WebLabeler/base_frame.html' %}
+
+{% load staticfiles %}
+{% load baseframe_tags %}
+
+{% block head %}
+
+{% endblock head %}
+
+{%  block nav %}
+    {% nav_bar True %}
+{%  endblock nav %}
+
+{% block content %}
+    <div class="container">
+        <br>
+        {% media_header %}
+        <div id="playerWrapper">
+            <div id='jwplayerElement'>Loading the player...</div>
+        </div>
+        <br>
+        <h3>Add Shot</h3>
+        <hr>
+        <form action="{% url 'media_sbd_add_shots' %}" method="POST">
+            {% csrf_token %}
+            <div class="form-horizontal">
+                <div class="form-group row">
+                    <div class="col-md-6">
+                        <textarea name="timecodes" class="form-control" rows="10" placeholder=
+"00:00:51;01	00:00:52;19
+00:00:52;20	00:00:56;22
+Timecode Here (HH:MM:SS;Frame)" required></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <textarea class="form-control" rows="10" placeholder="What's up?" readonly></textarea>
+                    </div>
+                    <input type="hidden" name="mediaPK" value="{{ media.pk }}">
+                    <input type="hidden" name="requestURL" value="{% url 'media_sbd_manual' media.pk %}">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Add Shot by Timecode</button>
+            </div>
+
+        </form>
+        <br>
+        <h3>Shots (5/{{ max_shots }})</h3>
+        <hr>
+        <div id="ShotTable">
+
+        </div>
+        {% for shot in shots %}
+            <div class="row">
+                <div class="col-md-3">
+                    <img id="StartShotFrame{{ shot.shotNum }}" class="img-thumbnail" src="...">
+                </div>
+                <div class=" col-md-3">
+                    <img id="EndShotFrame{{ shot.shotNum }}" class="img-thumbnail" src="...">
+                </div>
+                <div class="col-md-6">
+                    shotNum: {{ shot.shotNum }} <br>
+                    start: {{ shot.startTimestamp }}({{ shot.startFrame }}) <br>
+                    end: {{ shot.endTimestamp }}({{ shot.endFrame }})
+                </div>
+            </div>
+            <br>
+        {% endfor %}
+    </div>
+
+{% endblock content %}
+
+{% block jquery %}
+    <script src="{% static 'jwplayer7/jwplayer.js' %}"></script>
+    <script>jwplayer.key="/wHByQU+5ATRmkSFYZjJS0StNu8AJkANSSjlsw==";</script>
+    <script type='text/javascript'>
+        jwplayer("jwplayerElement").setup({
+            "file": "/uploads/{{ media.localFile }}",
+            "image": "/uploads/{{ media.thumbnail }}",
+            "width": "100%",
+            "height": "360",
+        });
+    </script>
+
+    {% util_get_image %}
+    <script>
+        //When the page has loaded.
+        $( document ).ready(function(){
+            {% for shot in shots %}
+                getImageURL("#StartShotFrame{{ shot.shotNum }}", {{ media.pk }}, {{ shot.startFrame }});
+                getImageURL("#EndShotFrame{{ shot.shotNum }}", {{ media.pk }}, {{ shot.endFrame }});
+            {% endfor %}
+        });
+
+    </script>
+{% endblock jquery %}
+

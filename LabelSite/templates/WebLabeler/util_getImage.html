@@ -1,0 +1,20 @@
+<script>
+    function setURL2ImageTag(data) {
+        console.log("Set Image " + data[0]['URL'] + " to " + data[0]['tagID']);
+        $(data[0]['tagID']).attr('src', '/uploads/' + data[0]['URL']);
+    }
+
+    function getImageURL(tagID, mediaPK, frameNum) {
+        //console.log("GET Image URL " + mediaPK + ", " + frameNum);
+        $.ajax({
+            url : '{% url 'util_media_image' %}',
+            data : {
+                mediaNum: mediaPK,
+                name: 'getFrameURL',
+                frameNum:  frameNum,
+                tagID: tagID,
+            },
+            success: setURL2ImageTag,
+        });
+    }
+</script>

@@ -1,0 +1,44 @@
+{% extends 'WebLabeler/base_frame.html' %}
+
+{% load staticfiles %}
+{% load baseframe_tags %}
+
+{% block head %}
+
+{% endblock head %}
+
+{%  block nav %}
+    {% nav_bar True %}
+{%  endblock nav %}
+
+{% block content %}
+    <div class="container">
+        <div id="playerWrapper">
+            <div id='jwplayerElement'>Loading the player...</div>
+        </div>
+    </div>
+    <br>
+    {% media_header %}
+
+    {% for shot in shots %}
+        shot{{ shot.shotNum }} <br>
+    {% endfor %}
+
+{% endblock content %}
+
+{% block jquery %}
+    <script src="{% static 'jwplayer7/jwplayer.js' %}"></script>
+    <script>jwplayer.key="/wHByQU+5ATRmkSFYZjJS0StNu8AJkANSSjlsw==";</script>
+    <script type='text/javascript'>
+        jwplayer("jwplayerElement").setup({
+            "file": "/uploads/{{ media.localFile }}",
+            "image": "/uploads/{{ media.thumbnail }}",
+            "width": "100%",
+            "height": "360",
+        });
+    </script>
+{% endblock jquery %}
+
+{% block footer %}
+    <span class="text-muted">Footer From Front Page.</span>
+{% endblock footer %}
